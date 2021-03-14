@@ -9,19 +9,17 @@
 import React from 'react';
 import {
   SafeAreaView,
-  ScrollView,
   StyleSheet,
-  Text,
   View,
   TextInput,
   ActivityIndicator,
-  Image,
   FlatList,
 } from 'react-native';
 import {defaultData} from './defaultData';
-import {fetchImageForBreed, fetchDogList} from './services/index';
-import {defaultDataToArray} from './utils/index';
-import {useDebouncedSearch} from './hooks/index';
+import {fetchImageForBreed, fetchDogList} from './src/services/index';
+import {defaultDataToArray} from './src/utils/index';
+import {useDebouncedSearch} from './src/hooks/index';
+import {ListItem} from './src/components/list-item/index';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -83,25 +81,7 @@ const App = () => {
           <FlatList
             data={searchResults.result}
             renderItem={({item}) => {
-              return (
-                <View style={styles.itemContainer}>
-                  <Text style={styles.itemBreedText}>{item.breed}</Text>
-                  {item?.images && (
-                    <ScrollView horizontal style={styles.itemImageContainer}>
-                      {item.images.map((image, index) => {
-                        return (
-                          <Image
-                            style={styles.itemImage}
-                            source={{
-                              uri: image,
-                            }}
-                          />
-                        );
-                      })}
-                    </ScrollView>
-                  )}
-                </View>
-              );
+              return <ListItem item={item} />;
             }}
             keyExtractor={(item, index) => item.key}
             ItemSeparatorComponent={() => {
@@ -113,25 +93,7 @@ const App = () => {
           <FlatList
             data={defaultDataToArray(defaultData)}
             renderItem={({item}) => {
-              return (
-                <View style={styles.itemContainer}>
-                  <Text style={styles.itemBreedText}>{item.breed}</Text>
-                  {item?.images && (
-                    <ScrollView horizontal style={styles.itemImageContainer}>
-                      {item.images.map((image, index) => {
-                        return (
-                          <Image
-                            style={styles.itemImage}
-                            source={{
-                              uri: image,
-                            }}
-                          />
-                        );
-                      })}
-                    </ScrollView>
-                  )}
-                </View>
-              );
+              return <ListItem item={item} />;
             }}
             keyExtractor={(item, index) => item.key}
             ItemSeparatorComponent={() => {
