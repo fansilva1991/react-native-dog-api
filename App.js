@@ -122,15 +122,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   loadingView: {flex: 1, alignItems: 'center', justifyContent: 'center'},
-  itemContainer: {
-    marginStart: 8,
-  },
-  itemBreedText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  itemImageContainer: {flexDirection: 'row'},
-  itemImage: {width: 75, height: 75, margin: 4},
   separator: {height: 16},
 });
 
