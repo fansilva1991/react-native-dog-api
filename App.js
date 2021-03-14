@@ -6,8 +6,7 @@
  * @flow strict-local
  */
 
-import React, {useState} from 'react';
-import type {Node} from 'react';
+import React from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -19,42 +18,12 @@ import {
   Image,
   FlatList,
 } from 'react-native';
-import _ from 'lodash';
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
-import useConstant from 'use-constant';
-import {useAsync} from 'react-async-hook';
 import {defaultData} from './defaultData';
+import {fetchImageForBreed, fetchDogList} from './services/index';
+import {defaultDataToArray} from './utils/index';
+import {useDebouncedSearch} from './hooks/index';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-
-// Reference: https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
-const useDebouncedSearch = searchFunction => {
-  // Handle the input text state
-  const [inputText, setInputText] = useState('');
-
-  // Debounce the original search async function
-  const debouncedSearchFunction = useConstant(() =>
-    AwesomeDebouncePromise(searchFunction, 1000),
-  );
-
-  // The async callback is run each time the text changes,
-  // but as the search function is debounced, it does not
-  // fire a new request on each keystroke
-  const searchResults = useAsync(async () => {
-    if (inputText.length === 0) {
-      return [];
-    } else {
-      return debouncedSearchFunction(inputText);
-    }
-  }, [debouncedSearchFunction, inputText]);
-
-  // Return everything needed for the hook consumer
-  return {
-    inputText,
-    setInputText,
-    searchResults,
-  };
-};
 
 const useSearchDogs = () => useDebouncedSearch(text => filter(text));
 
@@ -75,7 +44,7 @@ const filter = async text => {
           breed: fd.breed,
           images: null,
         };
-        const breedImages = await getImagesForBreed(fd.breed);
+        const breedImages = await fetchImageForBreed(fd.breed);
         dogWithImage.images = breedImages;
         dogListWithImages.push(dogWithImage);
       }
@@ -86,47 +55,7 @@ const filter = async text => {
   }
 };
 
-const fetchDogList = async () => {
-  let response = await fetch('https://dog.ceo/api/breeds/list/all');
-  response = await response.json();
-  const responseAsArray = [];
-  for (var key in response.message) {
-    if (response.message.hasOwnProperty(key)) {
-      const dog = {
-        breed: key,
-        image: null,
-      };
-      responseAsArray.push(dog);
-    }
-  }
-  return responseAsArray;
-};
-
-const getImagesForBreed = async dog => {
-  try {
-    const response = await fetch(`https://dog.ceo/api/breed/${dog}/images`);
-    let dogImagesForBreed = await response.json();
-    return dogImagesForBreed.message;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const defaultDataToArray = data => {
-  const responseAsArray = [];
-  for (var key in data) {
-    if (data.hasOwnProperty(key)) {
-      const dog = {
-        breed: key,
-        image: null,
-      };
-      responseAsArray.push(dog);
-    }
-  }
-  return responseAsArray;
-};
-
-const App: () => Node = () => {
+const App = () => {
   const backgroundStyle = {
     backgroundColor: Colors.lighter,
     flex: 1,
