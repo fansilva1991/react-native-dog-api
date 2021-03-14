@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  ActivityIndicator,
-  Image,
-  FlatList,
-} from 'react-native';
+import {ScrollView, StyleSheet, Text, View, Image} from 'react-native';
 
 const styles = StyleSheet.create({
   searchBox: {
