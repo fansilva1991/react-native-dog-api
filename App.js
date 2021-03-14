@@ -17,6 +17,9 @@ import {
   useColorScheme,
   View,
   TextInput,
+  ActivityIndicator,
+  Image,
+  FlatList,
 } from 'react-native';
 import _ from 'lodash';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
@@ -27,6 +30,7 @@ import {
   useAsyncCallback,
   UseAsyncReturn,
 } from 'react-async-hook';
+import {defaultData} from './defaultData';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -121,132 +125,91 @@ const App: () => Node = () => {
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    flex: 1,
+    justifyContent: 'center',
   };
 
   const [dogList, setDogList] = useState([]);
-  // const [filteredList, setFilteredList] = useState([]);
 
-  const {inputText, setInputText, searchResults} = useSearchDogs(dogList);
+  const {inputText, setInputText, searchResults} = useSearchDogs(defaultData);
 
   useEffect(() => {
     console.log('searchResults', searchResults);
   }, [searchResults]);
 
-  // useEffect(() => {
-  //   fetchDogList().then(result => {
-  //     setDogList(result);
-  //     setFilteredList(result);
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   // doFilter(search);
-  //   // delayedFilter(search);
-  // }, [search, delayedFilter]);
-
-  // const doFilter = useCallback(
-  //   async text => {
-  //     try {
-  //       if (text === '') {
-  //         setFilteredList([]);
-  //       } else {
-  //         setLoading(true);
-  //         const filteredDogs = dogList.filter(dog => {
-  //           return dog.breed.toLowerCase().includes(text.toLowerCase());
-  //         });
-  //         const dogListWithImages = [];
-  //         for (let i = 0; i < filteredDogs.length; i++) {
-  //           const fd = filteredDogs[i];
-  //           const dogWithImage = {
-  //             breed: fd.breed,
-  //             images: null,
-  //           };
-  //           const breedImages = await getImagesForBreed(fd.breed);
-  //           dogWithImage.images = breedImages;
-  //           console.log('dogWithImage', dogWithImage);
-  //           dogListWithImages.push(dogWithImage);
-  //         }
-  //         setFilteredList(dogListWithImages);
-  //         setLoading(false);
-  //         return dogListWithImages;
-  //       }
-  //     } catch (error) {
-  //       console.log('error', error);
-  //       setFilteredList([]);
-  //       return;
-  //     }
-  //   },
-  //   [dogList],
-  // );
-
   return (
     <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <TextInput
-            style={{
-              fontSize: 24,
-              margin: 10,
-              width: '90%',
-              height: 50,
-              backgroundColor: 'white',
-              borderColor: 'black',
-              borderWidth: 1,
-              borderRadius: 10,
+      <View style={styles.viewContainer}>
+        <TextInput
+          style={styles.searchBox}
+          value={inputText}
+          onChangeText={text => {
+            setInputText(text);
+          }}
+        />
+        {searchResults.loading === true && (
+          <View style={styles.loadingView}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
+        {searchResults?.result?.length > 0 && (
+          <FlatList
+            data={searchResults.result}
+            renderItem={({item}) => {
+              return (
+                <View
+                  style={{
+                    marginStart: 8,
+                  }}>
+                  <Text>{item.breed}</Text>
+                  {item?.images && (
+                    <View style={{flexDirection: 'row'}}>
+                      {item.images.map((image, index) => {
+                        return (
+                          <Image
+                            style={{width: 50, height: 50}}
+                            source={{
+                              uri: image,
+                            }}
+                          />
+                        );
+                      })}
+                    </View>
+                  )}
+                </View>
+              );
             }}
-            value={inputText}
-            onChangeText={text => {
-              // setSearch(text);
-              // delayedFilter(text);
-              setInputText(text);
-            }}
+            keyExtractor={(item, index) => item.key}
           />
-          {searchResults.loading === true && (
-            <View>
-              <Text>Loading</Text>
-            </View>
-          )}
-          {searchResults && (
-            <View>
-              <Text>{JSON.stringify(searchResults)}</Text>
-            </View>
-          )}
-          {/* {filteredList && filteredList.length > 0 && (
-            <View>
-              {filteredList.map(item => {
-                return <Text>{item.breed}</Text>;
-              })}
-            </View>
-          )} */}
-        </View>
-      </ScrollView>
+        )}
+        {searchResults?.result?.length === 0 && (
+          <View>
+            <Text>{JSON.stringify(defaultData)}</Text>
+          </View>
+        )}
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  viewContainer: {
+    backgroundColor: Colors.white,
+    flex: 1,
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
-  sectionTitle: {
+  searchBox: {
     fontSize: 24,
-    fontWeight: '600',
+    margin: 8,
+    width: '90%',
+    height: 50,
+    backgroundColor: 'white',
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 10,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  loadingView: {flex: 1, alignItems: 'center', justifyContent: 'center'},
 });
 
 export default App;
