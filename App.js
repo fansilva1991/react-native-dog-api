@@ -75,7 +75,7 @@ const App = () => {
         />
         {searchResults.loading === true && (
           <View style={styles.loadingView}>
-            <ActivityIndicator size="large" />
+            <ActivityIndicator size="large" color={'#0000ff'} />
           </View>
         )}
         {searchResults?.result?.length > 0 && (
@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 10,
+    color: 'black',
   },
   loadingView: {flex: 1, alignItems: 'center', justifyContent: 'center'},
   separator: {height: 16},
