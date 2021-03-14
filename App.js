@@ -6,15 +6,13 @@
  * @flow strict-local
  */
 
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState} from 'react';
 import type {Node} from 'react';
 import {
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   TextInput,
   ActivityIndicator,
@@ -24,12 +22,7 @@ import {
 import _ from 'lodash';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import useConstant from 'use-constant';
-import {
-  useAsync,
-  useAsyncAbortable,
-  useAsyncCallback,
-  UseAsyncReturn,
-} from 'react-async-hook';
+import {useAsync} from 'react-async-hook';
 import {defaultData} from './defaultData';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -89,7 +82,6 @@ const filter = async text => {
       return dogListWithImages;
     }
   } catch (error) {
-    console.log('error', error);
     return [];
   }
 };
@@ -184,7 +176,7 @@ const App: () => Node = () => {
             }}
             keyExtractor={(item, index) => item.key}
             ItemSeparatorComponent={() => {
-              return <View style={{height: 16}} />;
+              return <View style={styles.separator} />;
             }}
           />
         )}
@@ -214,7 +206,7 @@ const App: () => Node = () => {
             }}
             keyExtractor={(item, index) => item.key}
             ItemSeparatorComponent={() => {
-              return <View style={{height: 16}} />;
+              return <View style={styles.separator} />;
             }}
           />
         )}
@@ -227,8 +219,6 @@ const styles = StyleSheet.create({
   viewContainer: {
     backgroundColor: Colors.white,
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   searchBox: {
     fontSize: 24,
@@ -249,7 +239,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   itemImageContainer: {flexDirection: 'row'},
-  itemImage: {width: 75, height: 75},
+  itemImage: {width: 75, height: 75, margin: 4},
+  separator: {height: 16},
 });
 
 export default App;
