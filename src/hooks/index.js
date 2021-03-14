@@ -3,6 +3,7 @@ import useConstant from 'use-constant';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import {useAsync} from 'react-async-hook';
 
+// https://stackoverflow.com/questions/23123138/perform-debounce-in-react-js
 export const useDebouncedSearch = searchFunction => {
   // Handle the input text state
   const [inputText, setInputText] = useState('');
