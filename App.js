@@ -30,6 +30,7 @@ const filter = async text => {
     if (text === '') {
       return [];
     } else {
+      // Maybe I always should use the cached list
       const dogList = await fetchDogList();
 
       const filteredDogs = dogList.filter(dog => {
@@ -90,6 +91,10 @@ const App = () => {
           />
         )}
         {searchResults?.result?.length === 0 && (
+          // To avoid the need to call the API on the first loading,
+          // reading the first data ( without the images ) from a local file
+          // with all the breeds. If in the solution the breed solution changes
+          // every time, this would not be a good idea.
           <FlatList
             data={defaultDataToArray(defaultData)}
             renderItem={({item}) => {
