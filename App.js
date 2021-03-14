@@ -120,22 +120,28 @@ const getImagesForBreed = async dog => {
   }
 };
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+const defaultDataToArray = data => {
+  const responseAsArray = [];
+  for (var key in data) {
+    if (data.hasOwnProperty(key)) {
+      const dog = {
+        breed: key,
+        image: null,
+      };
+      responseAsArray.push(dog);
+    }
+  }
+  return responseAsArray;
+};
 
+const App: () => Node = () => {
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: Colors.lighter,
     flex: 1,
     justifyContent: 'center',
   };
 
-  const [dogList, setDogList] = useState([]);
-
   const {inputText, setInputText, searchResults} = useSearchDogs(defaultData);
-
-  useEffect(() => {
-    console.log('searchResults', searchResults);
-  }, [searchResults]);
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -157,35 +163,60 @@ const App: () => Node = () => {
             data={searchResults.result}
             renderItem={({item}) => {
               return (
-                <View
-                  style={{
-                    marginStart: 8,
-                  }}>
-                  <Text>{item.breed}</Text>
+                <View style={styles.itemContainer}>
+                  <Text style={styles.itemBreedText}>{item.breed}</Text>
                   {item?.images && (
-                    <View style={{flexDirection: 'row'}}>
+                    <ScrollView horizontal style={styles.itemImageContainer}>
                       {item.images.map((image, index) => {
                         return (
                           <Image
-                            style={{width: 50, height: 50}}
+                            style={styles.itemImage}
                             source={{
                               uri: image,
                             }}
                           />
                         );
                       })}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
               );
             }}
             keyExtractor={(item, index) => item.key}
+            ItemSeparatorComponent={() => {
+              return <View style={{height: 16}} />;
+            }}
           />
         )}
         {searchResults?.result?.length === 0 && (
-          <View>
-            <Text>{JSON.stringify(defaultData)}</Text>
-          </View>
+          <FlatList
+            data={defaultDataToArray(defaultData)}
+            renderItem={({item}) => {
+              return (
+                <View style={styles.itemContainer}>
+                  <Text style={styles.itemBreedText}>{item.breed}</Text>
+                  {item?.images && (
+                    <ScrollView horizontal style={styles.itemImageContainer}>
+                      {item.images.map((image, index) => {
+                        return (
+                          <Image
+                            style={styles.itemImage}
+                            source={{
+                              uri: image,
+                            }}
+                          />
+                        );
+                      })}
+                    </ScrollView>
+                  )}
+                </View>
+              );
+            }}
+            keyExtractor={(item, index) => item.key}
+            ItemSeparatorComponent={() => {
+              return <View style={{height: 16}} />;
+            }}
+          />
         )}
       </View>
     </SafeAreaView>
@@ -210,6 +241,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   loadingView: {flex: 1, alignItems: 'center', justifyContent: 'center'},
+  itemContainer: {
+    marginStart: 8,
+  },
+  itemBreedText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  itemImageContainer: {flexDirection: 'row'},
+  itemImage: {width: 75, height: 75},
 });
 
 export default App;
