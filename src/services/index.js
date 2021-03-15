@@ -1,10 +1,12 @@
+import {defaultData} from '../../defaultData';
+
 export const fetchImageForBreed = async dog => {
   try {
     const response = await fetch(`https://dog.ceo/api/breed/${dog}/images`);
     let dogImagesForBreed = await response.json();
     return dogImagesForBreed.message;
   } catch (error) {
-    console.error(error);
+    return defaultData;
   }
 };
 
