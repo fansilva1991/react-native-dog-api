@@ -11,17 +11,21 @@ export const fetchImageForBreed = async dog => {
 };
 
 export const fetchDogList = async () => {
-  let response = await fetch('https://dog.ceo/api/breeds/list/all');
-  response = await response.json();
-  const responseAsArray = [];
-  for (var key in response.message) {
-    if (response.message.hasOwnProperty(key)) {
-      const dog = {
-        breed: key,
-        image: null,
-      };
-      responseAsArray.push(dog);
+  try {
+    let response = await fetch('https://dog.ceo/api/breeds/list/all');
+    response = await response.json();
+    const responseAsArray = [];
+    for (var key in response.message) {
+      if (response.message.hasOwnProperty(key)) {
+        const dog = {
+          breed: key,
+          image: null,
+        };
+        responseAsArray.push(dog);
+      }
     }
+    return responseAsArray;
+  } catch {
+    return [];
   }
-  return responseAsArray;
 };
